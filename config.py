@@ -1,6 +1,6 @@
-# DATABASE
-
-HOST = "localhost"
-USER = "root"
-PASSWORD = ""
-DATABASE = "multikino"
+DATABASE = {
+    "HOST": "localhost",
+    "USER": "root",
+    "PASSWORD": "",
+    "DATABASE": "multikino"
+}
