@@ -3,6 +3,7 @@ from faker import Faker
 from db_connection import cursor
 import csv
 
+
 class GenerateData:
     # fake = Faker('pl_PL')
     fake = Faker('')
@@ -108,7 +109,7 @@ class GenerateData:
             foreign_keys.remove(foreign_keys[random_index])
         return unique_foreign_keys
 
-     # its not random
+    # its not random
     def GenerateMovies(self, quantity):
         movie_list = []
         with open('movies.csv', encoding="utf-8") as movie_file:
@@ -164,9 +165,18 @@ class GenerateData:
                 seats_RowsID.add((numbers, row_id))
         return seats_RowsID
 
+    def GenerateUniqueAccountsSubscriptionIdList(self, quantity):
+        acc_subs = set()
+        while len(acc_subs) < quantity:
+            acc_list = self.GenerateNotUniqueForeignKeysList("accounts", quantity - len(acc_subs))
+            subs_list = self.GenerateNotUniqueForeignKeysList("subscriptions", quantity - len(acc_subs))
+            for acc, sub in zip(acc_list, subs_list):
+                acc_subs.add((acc, sub))
+        return acc_subs
+
     def AddNullstoList(self, procent, list):
         for element in list:
-            if (random.randint(0,100) < procent):
+            if (random.randint(0, 100) < procent):
                 element = None
         return list
 

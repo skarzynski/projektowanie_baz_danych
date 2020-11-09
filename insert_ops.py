@@ -1,6 +1,6 @@
 from db_connection import connection, cursor
 from GenerateData import GenerateData
-
+import datetime
 data_generator = GenerateData()
 
 
@@ -62,8 +62,8 @@ def insert_seat(number, vip, row_id):
 def insert_seats(quantity):
     seats_RowID = data_generator.GenerateUniqueRowsRoomsIDList(quantity)
     vips = data_generator.GenerateBooleans(quantity)
-    for seat_Row_Id,vip in zip(seats_RowID,vips):
-        insert_seat(seat_Row_Id[0], vip,seat_Row_Id[1])
+    for seat_Row_Id, vip in zip(seats_RowID, vips):
+        insert_seat(seat_Row_Id[0], vip, seat_Row_Id[1])
 
 
 def insert_show(show_date, show_time, price, movie_id):
@@ -209,3 +209,50 @@ def insert_tickets(quantity):
         else:
             e = ""
         insert_ticket(sh, se, m, a, e)
+
+
+def insert_discount(name, mod_id):
+    sql = "INSERT INTO discounts(name, modifier_id) VALUES(%s,%s)"
+    values = (name, str(mod_id))
+    cursor.execute(sql, values)
+    connection.commit()
+
+
+def insert_discounts(quantity):
+    mod_id_list = data_generator.GenerateUniqueForeignKeysList("modifiers", quantity)
+    last_disc_id = get_last_id("discounts")
+    for mod_id in mod_id_list:
+        last_disc_id += 1
+        insert_discount("disc_" + str(last_disc_id), mod_id)
+
+
+def insert_subscription(name, description, mod_id):
+    sql = "INSERT INTO subscriptions(name, description, modifier_id) VALUES(%s,%s,%s)"
+    values = (name, description, str(mod_id))
+    cursor.execute(sql, values)
+    connection.commit()
+
+
+def insert_subscriptions(quantity):
+    last_sub_id = get_last_id("subscriptions")
+    description = ""
+    mod_id_list = data_generator.GenerateUniqueForeignKeysList("modifiers", quantity)
+    for mod_id in mod_id_list:
+        last_sub_id += 1
+        insert_subscription("sub_" + str(last_sub_id), "", mod_id)
+
+
+def insert_account_subscription(purchase_date, expire_date, account_id, subscription_id):
+    sql = "INSERT INTO account_subscription(purchase_date, expire_date, account_id, subscription_id) VALUES(%s,%s,%s,%s)"
+    values = (str(purchase_date), str(expire_date), str(account_id), str(subscription_id))
+    cursor.execute(sql, values)
+    connection.commit()
+
+
+def insert_account_subscriptions(quantity):
+    account_subscription_list = data_generator.GenerateUniqueAccountsSubscriptionIdList(quantity)
+    purchase_date_list = data_generator.GenerateDates(quantity)
+    for p_date, acc_sub in zip(purchase_date_list, account_subscription_list):
+        e_date = datetime.datetime.strptime(p_date, "%Y-%m-%d").date()
+        e_date += datetime.timedelta(days=31)
+        insert_account_subscription(p_date, e_date, acc_sub[0], acc_sub[1])
