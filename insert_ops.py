@@ -25,18 +25,74 @@ def insert_branches(quantity):
     for index in range(0, quantity):
         insert_branch(city_list[index], address_list[index])
 
+
 def insert_room(number, branch_id):
     sql = "INSERT INTO rooms(number, branch_id) VALUES(%s,%s)"
-    values = (number, branch_id)
+    values = (str(number), str(branch_id))
     cursor.execute(sql, values)
     connection.commit()
 
-def insert_rooms(quantity):
-    numbers_list = data_generator.GenerateCities(quantity)
-    branches_id_list = data_generator.GenerateAddresses(quantity)
-    for index in range(0, quantity):
-        insert_branch(numbers_list[index], branches_id_list[index])
 
+def insert_rooms(quantity):
+    rooms_BranchesID = data_generator.GenerateUniqueRoomsBranchesIDList(quantity)
+    for room_Branch_Id in rooms_BranchesID:
+        insert_branch(room_Branch_Id[0], room_Branch_Id[1])
+
+
+def insert_row(number, room_id):
+    sql = "INSERT INTO rows(number, room_id) VALUES(%s,%s)"
+    values = str((number), str(room_id))
+    cursor.execute(sql, values)
+    connection.commit()
+
+
+def insert_rows(quantity):
+    rows_RoomsID = data_generator.GenerateUniqueRowsRoomsIDList(quantity)
+    for row_Room_Id in rows_RoomsID:
+        insert_branch(row_Room_Id[0], row_Room_Id[1])
+
+
+def insert_seat(number, vip, row_id):
+    sql = "INSERT INTO seats(number, vip, row_id) VALUES(%s,%s,%s)"
+    values = (str(number), str(vip), str(row_id))
+    cursor.execute(sql, values)
+    connection.commit()
+
+
+def insert_seats(quantity):
+    seats_RowID = data_generator.GenerateUniqueRowsRoomsIDList(quantity)
+    vips = data_generator.GenerateBooleans(quantity)
+    for seat_Row_Id in seats_RowID:
+        insert_branch(seat_Row_Id[0], seat_Row_Id[1])
+
+
+def insert_show(show_date, show_time, price, movie_id):
+    sql = "INSERT INTO shows(show_date, show_time, price, movie_id) VALUES(%s,%s,%s,%s)"
+    values = (str(show_date), str(show_time), str(price), str(movie_id))
+    cursor.execute(sql, values)
+    connection.commit()
+
+
+def insert_shows(quantity):
+    dates = data_generator.GenerateDates(quantity)
+    times = data_generator.GenerateTimes(quantity)
+    prices = data_generator.GeneratePrices(quantity)
+    movies_ids = data_generator.GenerateNotUniqueForeignKeysList("movies", quantity)
+    for d, t, p, m_id in zip(dates, times, prices, movies_ids):
+        insert_show(d, t, p, m_id)
+
+
+def insert_room_show(room_id, show_id):
+    sql = "INSERT INTO room_show(room_id, show_id) VALUES(%s,%s)"
+    values = (str(room_id), str(show_id))
+    cursor.execute(sql, values)
+    connection.commit()
+
+
+def insert_room_shows(quantity):
+    room_show_list = data_generator.GenerateUniqueRoomShowList(quantity)
+    for room_show in room_show_list:
+        insert_genre_movie(room_show[0], room_show[1])
 
 
 def insert_account(login, password, email):
@@ -131,3 +187,25 @@ def insert_genre_movies(quantity):
     genre_movie_list = data_generator.GenerateUniqueGenreMovieList(quantity)
     for genre_movie in genre_movie_list:
         insert_genre_movie(genre_movie[0], genre_movie[1])
+
+
+def insert_ticket(show_id, seat_id, modifier_id, account_id, email):
+    sql = "INSERT INTO tickets(show_id, seat_id, modifier_id, account_id, email) VALUES(%s,%s,%s,%s,%s)"
+    values = (str(show_id), str(seat_id), str(modifier_id), str(account_id), email)
+    cursor.execute(sql, values)
+    connection.commit()
+
+
+def insert_tickets(quantity):
+    shows_id_list = data_generator.GenerateNotUniqueForeignKeysList("shows", quantity)
+    seats_id_list = data_generator.GenerateNotUniqueForeignKeysList("shows", quantity)
+    modifiers_id_list = data_generator.GenerateNotUniqueForeignKeysList("shows", quantity)
+    accounts_id_list = data_generator.GenerateNotUniqueForeignKeysList("shows", quantity)
+    emails_list = data_generator.GenerateEmails(quantity)
+    data_generator.AddNullstoList(30, accounts_id_list)
+    for sh, se, m, a, e in zip(shows_id_list, seats_id_list, modifiers_id_list, accounts_id_list, emails_list):
+        if a is None:
+            a = ""
+        else:
+            e = ""
+        insert_ticket(sh, se, m, a, e)
