@@ -111,7 +111,7 @@ class GenerateData:
      # its not random
     def GenerateMovies(self, quantity):
         movie_list = []
-        with open('movies.csv') as movie_file:
+        with open('movies.csv', encoding="utf-8") as movie_file:
             csv_reader = csv.reader(movie_file)
             for row, _ in zip(csv_reader, range(0, quantity)):
                 movie_list.append(row[1])
