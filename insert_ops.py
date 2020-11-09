@@ -25,6 +25,19 @@ def insert_branches(quantity):
     for index in range(0, quantity):
         insert_branch(city_list[index], address_list[index])
 
+def insert_room(number, branch_id):
+    sql = "INSERT INTO rooms(number, branch_id) VALUES(%s,%s)"
+    values = (number, branch_id)
+    cursor.execute(sql, values)
+    connection.commit()
+
+def insert_rooms(quantity):
+    numbers_list = data_generator.GenerateCities(quantity)
+    branches_id_list = data_generator.GenerateAddresses(quantity)
+    for index in range(0, quantity):
+        insert_branch(numbers_list[index], branches_id_list[index])
+
+
 
 def insert_account(login, password, email):
     sql = "INSERT INTO accounts(login, password,email) VALUES(%s,%s,%s)"
