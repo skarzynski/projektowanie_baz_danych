@@ -1,7 +1,7 @@
 from db_connection import connection, cursor
 
-def today_movies():
-    sql = "SELECT movies.name FROM shows INNER JOIN movies ON shows.movie_id = movies.id WHERE show_date = TODAY"
+def today_movies(date ="2020-11-04"):
+    sql = "SELECT movies.title FROM shows INNER JOIN movies ON shows.movie_id = movies.id WHERE shows.show_date = " + date
     cursor.execute(sql)
     connection.commit()
 
