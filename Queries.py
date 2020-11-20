@@ -83,3 +83,17 @@ def account_with_highest_income_for_cinema:
     tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and tickets.account_id = accounts.id"""
     cursor.execute(sql)
     connection.commit()
+
+def top3_genres_in_year:
+    sql = """SELECT GenresList.Genre, COUNT(GenresList.Genre) AS CountValue
+    FROM ((
+	    SELECT genres.name AS Genre, tickets.id, shows.show_date
+	    FROM ((movies INNER JOIN (genres INNER JOIN genre_movie ON genres.id = genre_movie.genre_id) ON movies.id = genre_movie.movie_id) INNER JOIN shows ON movies.id = shows.movie_id) INNER JOIN tickets ON shows.id = tickets.show_id
+	    GROUP BY genres.name, tickets.id, shows.show_date
+	    HAVING (YEAR(shows.show_date)=2020)) AS GenresList
+    )
+    GROUP BY GenresList.Genre
+    ORDER BY CountValue DESC
+    LIMIT	3"""
+    cursor.execute(sql)
+    connection.commit()
