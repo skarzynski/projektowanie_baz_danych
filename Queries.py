@@ -74,3 +74,12 @@ def average_price_of_ticket_in_this_month:
     )"""
     cursor.execute(sql)
     connection.commit()
+
+def account_with_highest_income_for_cinema:
+    sql = """select
+    accounts.login, SUM(IF(modifiers.type = 0, modifiers.value * shows.price, shows.price - modifiers.value )) FROM
+    tickets, modifiers, shows, accounts
+    WHERE
+    tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and tickets.account_id = accounts.id"""
+    cursor.execute(sql)
+    connection.commit()
