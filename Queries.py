@@ -11,8 +11,8 @@ def today_played():
     connection.commit()
 
 def most_often_played_movie_in_year():
-    sql = """SELECT shows.movie_id, title, show_date,
-COUNT(shows.movie_id) 
+    sql = """SELECT shows.movie_id, movies.title, shows.show_date,
+COUNT(shows.movie_id) AS times_played
 FROM shows, movies
 WHERE shows.movie_id = movies.id AND shows.show_date IN (
 	SELECT shows.show_date
@@ -20,8 +20,8 @@ WHERE shows.movie_id = movies.id AND shows.show_date IN (
 	WHERE DATE(show_date)>=DATE_SUB(NOW(),INTERVAL 1 YEAR)
 	)
 GROUP BY movie_id
-ORDER BY movie_id DESC 
-LIMIT 1"""
+ORDER BY times_played DESC
+LIMIT 1;"""
     cursor.execute(sql)
     connection.commit()
 
