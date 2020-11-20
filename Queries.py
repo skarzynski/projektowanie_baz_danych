@@ -116,3 +116,10 @@ def branches_with_highest_income_for_cinema():
     tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and shows.id = room_show.show_id and room_show.room_id = rooms.id and rooms.branch_id = branches.id"""
     cursor.execute(sql)
     return cursor.fetchall()
+
+
+def most_popular_seats():
+    sql = """SELECT seats.number AS seat_number,rows.number AS row_number, COUNT(tickets.seat_id) FROM seats INNER JOIN tickets ON tickets.seat_id = seats.id INNER JOIN rows ON seats.rows_id=rows.id GROUP BY tickets.seat_id ORDER BY COUNT(tickets.seat_id) DESC LIMIT 10
+    """
+    cursor.execute(sql)
+    return cursor.fetchall()
