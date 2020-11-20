@@ -49,7 +49,7 @@ seats.id"""
     connection.commit()
 
 def movie_with_highest_income():
-    sql = "select movies.title, SUM(IF(modifiers.type = 0, modifiers.value * shows.price,shows.price -modifiers.value )) FROM tickets,modifiers,shows,movies WHERE tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and shows.movie_id = movies.id"
+    sql = "select movies.title, SUM(IF(modifiers.type = 0, modifiers.value * shows.price,shows.price -modifiers.value )) as earnings FROM tickets,modifiers,shows,movies WHERE tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and shows.movie_id = movies.id"
     cursor.execute(sql)
     connection.commit()
 
@@ -77,7 +77,7 @@ def average_price_of_ticket_in_this_month:
 
 def account_with_highest_income_for_cinema:
     sql = """select
-    accounts.login, SUM(IF(modifiers.type = 0, modifiers.value * shows.price, shows.price - modifiers.value )) FROM
+    accounts.login, SUM(IF(modifiers.type = 0, modifiers.value * shows.price, shows.price - modifiers.value )) as earnings FROM
     tickets, modifiers, shows, accounts
     WHERE
     tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and tickets.account_id = accounts.id"""
@@ -95,5 +95,15 @@ def top3_genres_in_year:
     GROUP BY GenresList.Genre
     ORDER BY CountValue DESC
     LIMIT	3"""
+    cursor.execute(sql)
+    connection.commit()
+
+def branches_with_highest_income_for_cinema():
+    sql = """select
+    branches.city, branches.address, SUM(
+        IF(modifiers.type = 0, modifiers.value * shows.price, shows.price - modifiers.value )) as earnings FROM
+    tickets, modifiers, shows, branches, rooms, room_show
+    WHERE
+    tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and shows.id = room_show.show_id and room_show.room_id = rooms.id and rooms.branch_id = branches.id"""
     cursor.execute(sql)
     connection.commit()
