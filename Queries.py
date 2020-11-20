@@ -52,3 +52,25 @@ def movie_with_highest_income():
     sql = "select movies.title, SUM(IF(modifiers.type = 0, modifiers.value * shows.price,shows.price -modifiers.value )) FROM tickets,modifiers,shows,movies WHERE tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and shows.movie_id = movies.id"
     cursor.execute(sql)
     connection.commit()
+
+def average_price_of_ticket_in_this_month:
+    sql = """SELECT
+    AVG(shows.price)
+    AS
+    "average price this month"
+    FROM
+    shows
+    where
+    shows.show_date
+    IN(
+        SELECT
+    shows.show_date
+    FROM
+    shows
+    WHERE
+    DATE(show_date) >= DATE_SUB(NOW(), INTERVAL
+    1
+    MONTH)
+    )"""
+    cursor.execute(sql)
+    connection.commit()
