@@ -181,5 +181,3 @@ class GenerateData:
         return list
 
 
-if __name__ == "__main__":
-    generate = GenerateData()
