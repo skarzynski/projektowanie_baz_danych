@@ -1,6 +1,7 @@
 from db_connection import connection, cursor
 from GenerateData import GenerateData
 import datetime
+
 data_generator = GenerateData()
 
 
@@ -257,21 +258,22 @@ def insert_account_subscriptions(quantity):
         e_date += datetime.timedelta(days=31)
         insert_account_subscription(p_date, e_date, acc_sub[0], acc_sub[1])
 
+
 if __name__ == "__main__":
     generate = GenerateData()
-    # insert_branches(20)
-    # insert_rooms(50)
+    insert_accounts(100)
+    insert_branches(20)
+    insert_genres()
+    insert_modifiers(15)
+    insert_discounts(15)
+    insert_restrictions()
+    insert_movies(100)
+    insert_genre_movies(200)
+    insert_rooms(50)
     insert_rows(50)
     insert_seats(10000)
     insert_shows(3000)
     insert_room_shows(3000)
-    insert_accounts(100)
-    insert_modifiers(15)
-    insert_restrictions()
-    insert_genres()
-    insert_movies(100)
-    insert_genre_movies(200)
-    insert_tickets(10000)
-    insert_discounts(15)
     insert_subscriptions(5)
     insert_account_subscriptions(20)
+    insert_tickets(10000)
