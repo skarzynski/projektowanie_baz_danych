@@ -34,8 +34,8 @@ def insert_room(number, branch_id):
     connection.commit()
 
 
-def insert_rooms(quantity):
-    rooms_BranchesID = data_generator.GenerateUniqueRoomsBranchesIDList(quantity)
+def insert_rooms():
+    rooms_BranchesID = data_generator.GenerateUniqueRoomsBranchesIDList()
     for room_Branch_Id in rooms_BranchesID:
         insert_room(room_Branch_Id[0], room_Branch_Id[1])
 
@@ -47,8 +47,8 @@ def insert_row(number, room_id):
     connection.commit()
 
 
-def insert_rows(quantity):
-    rows_RoomsID = data_generator.GenerateUniqueRowsRoomsIDList(quantity)
+def insert_rows():
+    rows_RoomsID = data_generator.GenerateUniqueRowsRoomsIDList()
     for row_Room_Id in rows_RoomsID:
         insert_row(row_Room_Id[0], row_Room_Id[1])
 
@@ -60,9 +60,9 @@ def insert_seat(number, vip, row_id):
     connection.commit()
 
 
-def insert_seats(quantity):
-    seats_RowID = data_generator.GenerateUniqueRowsRoomsIDList(quantity)
-    vips = data_generator.GenerateBooleans(quantity)
+def insert_seats():
+    seats_RowID = data_generator.GenerateUniqueSeatsRowsIDList()
+    vips = data_generator.GenerateBooleans(len(seats_RowID))
     for seat_Row_Id, vip in zip(seats_RowID, vips):
         insert_seat(seat_Row_Id[0], vip, seat_Row_Id[1])
 
@@ -125,10 +125,11 @@ def insert_modifier(type, name, value):
 def insert_modifiers(quantity):
     type_list = data_generator.GenerateBooleans(quantity)
     last_mod_id = get_last_id("modifiers")
-    value_list = data_generator.GeneratePrices(quantity)
+    value_list = data_generator.GenerateModifiersValues(quantity, type_list)
+    print(value_list)
     for t, v in zip(type_list, value_list):
         last_mod_id += 1
-        insert_modifier(t, "mod_" + str(last_mod_id), v * 0.01)
+        insert_modifier(t, "mod_" + str(last_mod_id), v)
 
 
 def insert_restriction(rest_name):
@@ -259,21 +260,40 @@ def insert_account_subscriptions(quantity):
         insert_account_subscription(p_date, e_date, acc_sub[0], acc_sub[1])
 
 
-if __name__ == "__main__":
-    generate = GenerateData()
+def populate_database():
     insert_accounts(100)
+    print("accounts inserted")
     insert_branches(20)
+    print("branches inserted")
     insert_genres()
+    print("genres inserted")
     insert_modifiers(15)
+    print("modifiers inserted")
     insert_discounts(15)
+    print("discounts inserted")
     insert_restrictions()
+    print("restrictions inserted")
     insert_movies(100)
+    print("movies inserted")
     insert_genre_movies(200)
-    insert_rooms(50)
-    insert_rows(50)
-    insert_seats(10000)
+    print("genre_movies inserted")
+    insert_rooms()
+    print("rooms inserted")
+    insert_rows()
+    print("rows inserted")
+    insert_seats()
+    print("seats inserted")
     insert_shows(3000)
+    print("shows inserted")
     insert_room_shows(3000)
+    print("room_shows inserted")
     insert_subscriptions(5)
+    print("subscriptions inserted")
     insert_account_subscriptions(20)
+    print("account_subscribtions inserted")
     insert_tickets(10000)
+    print("tickets_inserted")
+
+
+if __name__ == '__main__':
+    populate_database()

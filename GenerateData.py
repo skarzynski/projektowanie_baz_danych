@@ -1,4 +1,6 @@
 import random
+import string
+
 from faker import Faker
 from db_connection import cursor
 import csv
@@ -14,10 +16,10 @@ class GenerateData:
             listOfInteger.append(random.randint(min, max))
         return listOfInteger
 
-    def GeneratePrices(self, amountOfData, min=0.0, max=9999.99):
+    def GeneratePrices(self, amountOfData, prices_list=[29.99, 44.99, 59.99]):
         listOfPrices = []
         for x in range(amountOfData):
-            listOfPrices.append(random.uniform(min, max))
+            listOfPrices.append(prices_list[random.randint(0, len(prices_list)-1)])
         return listOfPrices
 
     def GenerateBooleans(self, amountOfData):
@@ -25,6 +27,25 @@ class GenerateData:
         for x in range(amountOfData):
             listOfBolleans.append(random.randint(0, 1))
         return listOfBolleans
+
+    # in modifierTypeList I assume the following
+    # 0 means discount in pln
+    # 1 means discount in %
+    def GenerateModifiersValues(self, amountOfData, modifierTypeList=[]):
+
+        listOfModifiersValues = []
+        if len(modifierTypeList) == 0:
+            modifierTypeList = [random.randint(0, 1) for i in range(0, amountOfData)]
+
+        for t_type in modifierTypeList:
+            if t_type:
+                # max % discount is 30 % and its int
+                listOfModifiersValues.append(random.randint(0, 30))
+            else:
+                # max PLN discount is 15 pln and its float
+                listOfModifiersValues.append(float("{:.2f}".format(random.uniform(0.0, 15.00))))
+        return listOfModifiersValues
+
 
     def GenerateCities(self, amountOfData):
         listOfCities = []
@@ -138,31 +159,29 @@ class GenerateData:
         return room_show
 
     # risk of infinite loop
-    def GenerateUniqueRoomsBranchesIDList(self, quantity):
+    # I ll just populate every branch with 10 rooms
+    def GenerateUniqueRoomsBranchesIDList(self):
         rooms_BranchesID = set()
-        while len(rooms_BranchesID) < quantity:
-            numbers_list = self.GenerateIntegers(quantity, 20)
-            branches_id_list = self.GenerateNotUniqueForeignKeysList("branches", quantity - len(rooms_BranchesID))
-            for numbers, branch_id in zip(numbers_list, branches_id_list):
-                rooms_BranchesID.add((numbers, branch_id))
+        for branch_id in self.GenerateForeignKeys("branches"):
+            for room_number in range(1, 11):
+                rooms_BranchesID.add((room_number, branch_id))
         return rooms_BranchesID
 
-    def GenerateUniqueRowsRoomsIDList(self, quantity):
+    # populate every room with 10 rows
+    def GenerateUniqueRowsRoomsIDList(self):
         rows_RoomsID = set()
-        while len(rows_RoomsID) < quantity:
-            numbers_list = self.GenerateIntegers(quantity, 20)
-            rooms_id_list = self.GenerateNotUniqueForeignKeysList("rooms", quantity - len(rows_RoomsID))
-            for numbers, room_id in zip(numbers_list, rooms_id_list):
-                rows_RoomsID.add((numbers, room_id))
+        alphabet_list = list(string.ascii_uppercase)
+        for room_id in self.GenerateForeignKeys("rooms"):
+            for row_number in range(1, 11):
+                rows_RoomsID.add((alphabet_list[row_number], room_id))
         return rows_RoomsID
 
-    def GenerateUniqueSeatsRowsIDList(self, quantity):
+    #populate every row with 10 seats
+    def GenerateUniqueSeatsRowsIDList(self):
         seats_RowsID = set()
-        while len(seats_RowsID) < quantity:
-            numbers_list = self.GenerateIntegers(quantity, 30)
-            rows_id_list = self.GenerateNotUniqueForeignKeysList("rows", quantity - len(seats_RowsID))
-            for numbers, row_id in zip(numbers_list, rows_id_list):
-                seats_RowsID.add((numbers, row_id))
+        for row_id in self.GenerateForeignKeys("rows"):
+            for seat_number in range(1, 11):
+                seats_RowsID.add((seat_number, row_id))
         return seats_RowsID
 
     def GenerateUniqueAccountsSubscriptionIdList(self, quantity):

@@ -2,7 +2,7 @@ from db_connection import connection, cursor
 
 
 def today_movies(date="2020-11-04"):
-    sql = "SELECT movies.title FROM shows INNER JOIN movies ON shows.movie_id = movies.id WHERE shows.show_date = " + date
+    sql = "SELECT movies.title FROM shows INNER JOIN movies ON shows.movie_id = movies.id WHERE shows.show_date = '" + date +"'"
     cursor.execute(sql)
     return cursor.fetchall()
 
@@ -119,7 +119,7 @@ def branches_with_highest_income_for_cinema():
 
 
 def most_popular_seats():
-    sql = """SELECT seats.number AS seat_number,rows.number AS row_number, COUNT(tickets.seat_id) FROM seats INNER JOIN tickets ON tickets.seat_id = seats.id INNER JOIN rows ON seats.rows_id=rows.id GROUP BY tickets.seat_id ORDER BY COUNT(tickets.seat_id) DESC LIMIT 10
+    sql = """SELECT seats.number AS seat_number,rows.number AS row_number, COUNT(tickets.seat_id) as popularity FROM seats INNER JOIN tickets ON tickets.seat_id = seats.id INNER JOIN rows ON seats.rows_id=rows.id GROUP BY tickets.seat_id ORDER BY COUNT(tickets.seat_id) DESC LIMIT 10
     """
     cursor.execute(sql)
     return cursor.fetchall()
