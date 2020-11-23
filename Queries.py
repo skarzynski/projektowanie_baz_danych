@@ -84,7 +84,7 @@ def average_price_of_ticket_in_this_month():
 
 def account_with_highest_income_for_cinema():
     sql = """select
-    accounts.login, SUM(IF(modifiers.type = 0, modifiers.value * shows.price, shows.price - modifiers.value )) as earnings FROM
+    accounts.login, SUM(IF(modifiers.type = 1, shows.price - (modifiers.value * shows.price/100), shows.price - modifiers.value )) as earnings FROM
     tickets, modifiers, shows, accounts
     WHERE
     tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and tickets.account_id = accounts.id"""
@@ -110,7 +110,7 @@ def top3_genres_in_year(year = "2020"):
 def branches_with_highest_income_for_cinema():
     sql = """select
     branches.city, branches.address, SUM(
-        IF(modifiers.type = 0, modifiers.value * shows.price, shows.price - modifiers.value )) as earnings FROM
+        IF(modifiers.type = 1, shows.price - (modifiers.value * shows.price/100), shows.price - modifiers.value )) as earnings FROM
     tickets, modifiers, shows, branches, rooms, room_show
     WHERE
     tickets.modifier_id = modifiers.id and tickets.show_id = shows.id and shows.id = room_show.show_id and room_show.room_id = rooms.id and rooms.branch_id = branches.id"""
